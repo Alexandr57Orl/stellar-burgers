@@ -19,109 +19,104 @@ import {
 
 // импорты модалок
 import { OrderInfo, IngredientDetails } from '@components';
-import {
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-  RouterProvider,
-  createBrowserRouter
-} from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
-const location = useLocation(); // Инициализируем хук для получения текущего местоположения
-const backgroundLocal = location.state && location.state.background; // Инициализируем хук для получения состояния
-const navigate = useNavigate();
+const App = () => {
+  const location = useLocation(); // Инициализируем хук для получения текущего местоположения
+  const backgroundLocal = location.state && location.state.background; // Инициализируем хук для получения состояния
+  const navigate = useNavigate();
 
-const closeModal = () => {
-  navigate(-1);
-};
+  const closeModal = () => {
+    navigate(-1);
+  };
 
-const App = () => (
-  <div className={styles.app}>
-    <AppHeader />
-    <Routes location={location}>
-      <Route path='/' element={<ConstructorPage />} />
-      <Route path='/ingredients/:id' element={<IngredientDetails />} />
-      <Route path='/feed' element={<Feed />} />
-      <Route
-        path='login'
-        element={
-          <ProtectedRoute>
-            <Login />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path='register'
-        element={
-          <ProtectedRoute>
-            <Register />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path='forgot-password'
-        element={
-          <ProtectedRoute>
-            <ForgotPassword />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path='reset-password'
-        element={
-          <ProtectedRoute>
-            <ResetPassword />
-          </ProtectedRoute>
-        }
-      />{' '}
-      <Route
-        path='profile'
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path='orders'
-        element={
-          <ProtectedRoute>
-            <ProfileOrders />
-          </ProtectedRoute>
-        }
-      />
-      <Route path='*' element={<NotFound404 />} />
-    </Routes>
-    {backgroundLocal && (
-      <Routes>
+  return (
+    <div className={styles.app}>
+      <AppHeader />
+      <Routes location={backgroundLocal || location}>
+        <Route path='/' element={<ConstructorPage />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route path='/feed' element={<Feed />} />
         <Route
-          path='/feed/:number'
+          path='login'
           element={
-            <Modal title='' onClose={closeModal}>
-              <OrderInfo />
-            </Modal>
+            <ProtectedRoute>
+              <Login />
+            </ProtectedRoute>
           }
         />
         <Route
-          path='/orders/:number'
+          path='register'
           element={
-            <Modal title='' onClose={closeModal}>
-              <OrderInfo />
-            </Modal>
+            <ProtectedRoute>
+              <Register />
+            </ProtectedRoute>
           }
         />
         <Route
-          path='/ingredients/:id'
+          path='forgot-password'
           element={
-            <Modal title='Детали ингредиента' onClose={closeModal}>
-              <OrderInfo />
-            </Modal>
+            <ProtectedRoute>
+              <ForgotPassword />
+            </ProtectedRoute>
           }
         />
+        <Route
+          path='reset-password'
+          element={
+            <ProtectedRoute>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path='profile'
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='orders'
+          element={
+            <ProtectedRoute>
+              <ProfileOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route path='*' element={<NotFound404 />} />
       </Routes>
-    )}
-  </div>
-);
+      {backgroundLocal && (
+        <Routes>
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal title='' onClose={closeModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/orders/:number'
+            element={
+              <Modal title='' onClose={closeModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title='Детали ингредиента' onClose={closeModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+        </Routes>
+      )}
+    </div>
+  );
+};
 
 export default App;
