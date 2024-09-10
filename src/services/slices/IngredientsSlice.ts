@@ -42,9 +42,17 @@ const ingredientsSlice = createSlice({
         state.error = action.error.message;
       });
   },
-  selectors: { getIngredientsWithSelector: (state) => state.ingredients }
+  selectors: {
+    getIngredientsWithSelector: (state) => state.ingredients,
+    getLoadingStatus: (state) => state.loading,
+    getStateIngredients: (state) => state
+  }
 });
 
 export default ingredientsSlice.reducer;
 
-export const { getIngredientsWithSelector } = ingredientsSlice.selectors;
+export const {
+  getIngredientsWithSelector,
+  getLoadingStatus,
+  getStateIngredients
+} = ingredientsSlice.selectors;

@@ -4,6 +4,11 @@ import styles from './app.module.css';
 import { AppHeader, Modal } from '@components';
 import { ProtectedRoute } from '../routes/ProtectedRoute';
 
+// импорты хуков
+import { useDispatch } from 'react-redux';
+import { getIngredients } from '../../services/slices/IngredientsSlice';
+import { useEffect } from 'react';
+import { AppDispatch } from 'src/services/store';
 // импорты роутинга по page
 import {
   ConstructorPage,
@@ -29,6 +34,12 @@ const App = () => {
   const closeModal = () => {
     navigate(-1);
   };
+
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getIngredients());
+  }, [dispatch]);
 
   return (
     <div className={styles.app}>
@@ -109,7 +120,7 @@ const App = () => {
             path='/ingredients/:id'
             element={
               <Modal title='Детали ингредиента' onClose={closeModal}>
-                <OrderInfo />
+                <IngredientDetails />
               </Modal>
             }
           />
