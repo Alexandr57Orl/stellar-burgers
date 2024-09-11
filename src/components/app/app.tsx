@@ -2,7 +2,8 @@ import '../../index.css';
 import styles from './app.module.css';
 
 import { AppHeader, Modal } from '@components';
-import { ProtectedRoute } from '../routes/ProtectedRoute';
+import { PrivatedRoute } from '../routes/ProtectedRoute';
+import { toGetUserApi } from '../../services/slices/UserSlices';
 
 // импорты хуков
 import { useDispatch } from 'react-redux';
@@ -39,6 +40,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getIngredients());
+    dispatch(toGetUserApi());
   }, [dispatch]);
 
   return (
@@ -51,49 +53,49 @@ const App = () => {
         <Route
           path='login'
           element={
-            <ProtectedRoute>
+            <PrivatedRoute onlyUnAuth>
               <Login />
-            </ProtectedRoute>
+            </PrivatedRoute>
           }
         />
         <Route
           path='register'
           element={
-            <ProtectedRoute>
+            <PrivatedRoute onlyUnAuth>
               <Register />
-            </ProtectedRoute>
+            </PrivatedRoute>
           }
         />
         <Route
           path='forgot-password'
           element={
-            <ProtectedRoute>
+            <PrivatedRoute onlyUnAuth>
               <ForgotPassword />
-            </ProtectedRoute>
+            </PrivatedRoute>
           }
         />
         <Route
           path='reset-password'
           element={
-            <ProtectedRoute>
+            <PrivatedRoute>
               <ResetPassword />
-            </ProtectedRoute>
+            </PrivatedRoute>
           }
         />{' '}
         <Route
           path='profile'
           element={
-            <ProtectedRoute>
+            <PrivatedRoute onlyUnAuth>
               <Profile />
-            </ProtectedRoute>
+            </PrivatedRoute>
           }
         />
         <Route
           path='orders'
           element={
-            <ProtectedRoute>
+            <PrivatedRoute>
               <ProfileOrders />
-            </ProtectedRoute>
+            </PrivatedRoute>
           }
         />
         <Route path='*' element={<NotFound404 />} />
