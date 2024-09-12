@@ -1,12 +1,16 @@
 import { useDispatch } from '../../services/store';
 import { TLoginData } from '../../utils/burger-api';
-import { toLogin } from '../../services/slices/UserSlices';
+import { toLogin, selectIsAunticated } from '../../services/slices/UserSlices';
+import { useSelector } from '../../services/store';
+import { Navigate } from 'react-router-dom';
 import { FC, SyntheticEvent, useState } from 'react';
 import { LoginUI } from '@ui-pages';
 
 export const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const isAunticated = useSelector(selectIsAunticated);
 
   const dispatch = useDispatch();
 
@@ -19,6 +23,10 @@ export const Login: FC = () => {
 
     dispatch(toLogin(userLoginDate));
   };
+
+  if (isAunticated) {
+    return <Navigate to={'/'} />;
+  }
 
   return (
     <LoginUI

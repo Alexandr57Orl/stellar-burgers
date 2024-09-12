@@ -1,17 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookie';
+import { TRegisterData } from '@api';
 
 import {
-  refreshToken,
-  fetchWithRefresh,
   registerUserApi,
   loginUserApi,
   getUserApi,
   updateUserApi,
-  logoutApi,
-  forgotPasswordApi,
-  resetPasswordApi
+  logoutApi
 } from '@api';
 
 type TStateUser = {
@@ -30,14 +27,40 @@ const initialState: TStateUser = {
   loginUserRequest: false
 };
 
-export const toRegitrer = createAsyncThunk(
-  'user/registerUser',
-  registerUserApi
+export const toRegister = createAsyncThunk(
+  'user/register',
+  async ({ name, email, password }: TRegisterData) => {
+    const data = await registerUserApi({ name, email, password });
+    setCookie('token', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    return data.user;
+  }
 );
-export const toLogin = createAsyncThunk('user/login', loginUserApi);
+export const toLogin = createAsyncThunk(
+  'user/login',
+  async ({ email, password }: Omit<TRegisterData, 'name'>) => {
+    const data = await loginUserApi({ email, password });
+
+    setCookie('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+
+    return data.user;
+  }
+);
+export const toLogout = createAsyncThunk(
+  'user/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      await logoutApi();
+      deleteCookie('accessToken');
+      localStorage.clear();
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
 export const toGetUserApi = createAsyncThunk('user/userApi', getUserApi);
 export const toUpdateUser = createAsyncThunk('user/update', updateUserApi);
-export const toLogout = createAsyncThunk('user/logout', logoutApi);
 
 export const userStateSlice = createSlice({
   name: 'userstate',
@@ -53,73 +76,79 @@ export const userStateSlice = createSlice({
         state.isAunticated = false;
         state.user = null;
         state.loginUserError = null;
+        state.loginUserRequest = true;
       })
       .addCase(toGetUserApi.fulfilled, (state, action) => {
         state.isAunticated = true;
         state.user = action.payload.user;
-        state.loginUserError = null;
+        state.isAuthChecked = true;
+        state.loginUserRequest = false;
       })
       .addCase(toGetUserApi.rejected, (state, action) => {
         state.isAunticated = false;
         state.user = null;
         state.loginUserError = action.error.message || 'Server error';
         state.isAuthChecked = true;
+        state.loginUserRequest = false;
       })
       .addCase(toLogin.pending, (state) => {
-        state.isAunticated = false;
         state.loginUserError = null;
         state.loginUserRequest = true;
       })
       .addCase(toLogin.fulfilled, (state, action) => {
         state.isAunticated = true;
-        state.user = action.payload.user;
-        state.loginUserError = null;
+        state.user = action.payload;
         state.loginUserRequest = false;
+        state.isAuthChecked = true;
       })
       .addCase(toLogin.rejected, (state, action) => {
-        state.isAunticated = false;
-        state.user = null;
         state.loginUserError = action.error.message || 'Server error';
         state.isAuthChecked = true;
         state.loginUserRequest = false;
       })
-      .addCase(toRegitrer.pending, (state) => {
+      .addCase(toRegister.pending, (state) => {
         state.isAunticated = false;
-        state.loginUserError = null;
-      })
-      .addCase(toRegitrer.fulfilled, (state, action) => {
-        state.isAunticated = true;
-        state.user = action.payload.user;
-        state.loginUserError = null;
-      })
-      .addCase(toRegitrer.rejected, (state, action) => {
-        state.isAunticated = false;
+        state.loginUserRequest = true;
         state.user = null;
+      })
+      .addCase(toRegister.fulfilled, (state, action) => {
+        state.isAunticated = true;
+        state.user = action.payload;
+        state.loginUserRequest = false;
+      })
+      .addCase(toRegister.rejected, (state, action) => {
+        state.isAunticated = false;
+        state.loginUserRequest = false;
         state.loginUserError = action.error.message || 'Server error';
-        state.isAuthChecked = true;
       })
       .addCase(toLogout.pending, (state) => {
         state.isAunticated = true;
+        state.loginUserRequest = true;
       })
       .addCase(toLogout.fulfilled, (state) => {
-        state.isAunticated = true;
+        state.isAunticated = false;
         state.user = null;
+        state.loginUserRequest = false;
         deleteCookie('accessToken');
         localStorage.removeItem('refreshToken');
       })
       .addCase(toLogout.rejected, (state, action) => {
         state.isAunticated = false;
         state.loginUserError = action.error.message || 'Server error';
+        state.loginUserRequest = false;
       })
       .addCase(toUpdateUser.pending, (state) => {
         state.isAunticated = true;
+        state.loginUserRequest = true;
       })
       .addCase(toUpdateUser.fulfilled, (state, action) => {
         state.isAunticated = true;
+        state.loginUserRequest = false;
         state.user = action.payload.user;
       })
       .addCase(toUpdateUser.rejected, (state, action) => {
         state.isAunticated = false;
+        state.loginUserRequest = false;
         state.loginUserError = action.error.message || 'Server error';
       });
   },
@@ -136,18 +165,15 @@ export const checkUserAuth = createAsyncThunk(
   'user/checkUser',
   (_, { dispatch }) => {
     if (getCookie('accessToken')) {
-      dispatch(toGetUserApi())
-        .then(() => {
-          dispatch(userStateSlice.actions.authVerify());
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      dispatch(toGetUserApi()).finally(() => {
+        dispatch(authVerify());
+      });
     } else {
-      dispatch(userStateSlice.actions.authVerify());
+      dispatch(authVerify());
     }
   }
 );
+
 export const {
   selectUser,
   selectIsAunticated,

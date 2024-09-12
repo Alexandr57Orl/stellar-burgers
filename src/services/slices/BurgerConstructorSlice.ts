@@ -29,10 +29,6 @@ const initialState: TStateBurgerConstructor = {
   error: null
 };
 
-type IngredientWithKey = TIngredient & {
-  key: string;
-};
-
 export const createOrder = createAsyncThunk(
   'order/createOrder',
   async (data: string[]) => {
@@ -87,6 +83,11 @@ export const burgerConstructorSlice = createSlice({
           ingredients[indexAction + 1]
         ];
       }
+    },
+    clearOrder: (state) => {
+      state.constructorItems.bun = null;
+      state.constructorItems.ingredients = [];
+      state.orderModalData = null;
     }
   },
   extraReducers: (builder) => {
@@ -130,7 +131,8 @@ export const {
   addIngredient,
   removeIngredient,
   moveUpIngredient,
-  moveDownIngredient
+  moveDownIngredient,
+  clearOrder
 } = burgerConstructorSlice.actions;
 
 export default burgerConstructorSlice.reducer;

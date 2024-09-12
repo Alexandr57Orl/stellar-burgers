@@ -28,8 +28,8 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
         ingredient={ingredient}
         index={index}
         totalItems={totalItems}
-        handleMoveUp={handleMoveUp}
         handleMoveDown={handleMoveDown}
+        handleMoveUp={handleMoveUp}
         handleClose={handleClose}
       />
     );

@@ -1,52 +1,50 @@
-import '../../index.css';
-import styles from './app.module.css';
-
-import { AppHeader, Modal } from '@components';
-import { PrivatedRoute } from '../routes/ProtectedRoute';
-import { toGetUserApi } from '../../services/slices/UserSlices';
-
-// импорты хуков
-import { useDispatch } from 'react-redux';
-import { getIngredients } from '../../services/slices/IngredientsSlice';
-import { useEffect } from 'react';
-import { AppDispatch } from 'src/services/store';
-// импорты роутинга по page
 import {
   ConstructorPage,
   Feed,
-  ForgotPassword,
   Login,
-  NotFound404,
+  Register,
+  ForgotPassword,
+  ResetPassword,
   Profile,
   ProfileOrders,
-  Register,
-  ResetPassword
+  NotFound404
 } from '@pages';
 
-// импорты модалок
-import { OrderInfo, IngredientDetails } from '@components';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import '../../index.css';
+import styles from './app.module.css';
+import { AppHeader, Modal, IngredientDetails, OrderInfo } from '@components';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from '../../services/store';
+import { useEffect } from 'react';
+import { getIngredients } from '../../services/slices/IngredientsSlice';
+import { toGetUserApi, checkUserAuth } from '../../services/slices/UserSlices';
+import { AppDispatch } from '../../services/store';
+import { PrivatedRoute } from '../../components/routes/ProtectedRoute';
 
 const App = () => {
-  const location = useLocation(); // Инициализируем хук для получения текущего местоположения
-  const backgroundLocal = location.state && location.state.background; // Инициализируем хук для получения состояния
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+
+  const locationState = location.state as { background?: Location };
+  const background = locationState && location.state?.background;
 
   const closeModal = () => {
     navigate(-1);
   };
 
-  const dispatch: AppDispatch = useDispatch();
-
   useEffect(() => {
     dispatch(getIngredients());
-    dispatch(toGetUserApi());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(checkUserAuth());
   }, [dispatch]);
 
   return (
     <div className={styles.app}>
       <AppHeader />
-      <Routes location={backgroundLocal || location}>
+      <Routes location={background || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
         <Route path='/feed' element={<Feed />} />
@@ -77,43 +75,37 @@ const App = () => {
         <Route
           path='reset-password'
           element={
-            <PrivatedRoute>
+            <PrivatedRoute onlyUnAuth>
               <ResetPassword />
             </PrivatedRoute>
           }
-        />{' '}
+        />
         <Route
           path='profile'
           element={
-            <PrivatedRoute onlyUnAuth>
+            <PrivatedRoute>
               <Profile />
             </PrivatedRoute>
           }
         />
         <Route
-          path='orders'
+          path='profile/orders'
           element={
             <PrivatedRoute>
               <ProfileOrders />
             </PrivatedRoute>
           }
         />
+
         <Route path='*' element={<NotFound404 />} />
       </Routes>
-      {backgroundLocal && (
+
+      {background && (
         <Routes>
           <Route
             path='/feed/:number'
             element={
-              <Modal title='' onClose={closeModal}>
-                <OrderInfo />
-              </Modal>
-            }
-          />
-          <Route
-            path='/orders/:number'
-            element={
-              <Modal title='' onClose={closeModal}>
+              <Modal title='Заказ' onClose={closeModal}>
                 <OrderInfo />
               </Modal>
             }
@@ -121,9 +113,19 @@ const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title='Детали ингредиента' onClose={closeModal}>
+              <Modal title={'Детали ингредиента'} onClose={closeModal}>
                 <IngredientDetails />
               </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <PrivatedRoute>
+                <Modal title='Информаци по заказу' onClose={closeModal}>
+                  <OrderInfo />
+                </Modal>
+              </PrivatedRoute>
             }
           />
         </Routes>
