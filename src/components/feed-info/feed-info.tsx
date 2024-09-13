@@ -4,13 +4,9 @@ import { FeedInfoUI } from '../ui/feed-info';
 import {
   getFeedOrders,
   getFeedTotal,
-  getFeedTotalToday,
-  getFeedIsLoading,
-  getFeedError
+  getFeedTotalToday
 } from '../../services/slices/FeedSlice';
 import { useSelector } from '../../services/store';
-
-//Обертка для компонента отображения общей информации о заказах в ленте заказов. Содержит основную логику, результаты передаются в компонент для последующего рендера
 
 // Вспомогательная функция для получения номеров заказов по их статусу
 const getOrders = (orders: TOrder[], status: string): number[] =>

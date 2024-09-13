@@ -11,7 +11,7 @@ type TProtectedRouteProps = {
   onlyUnAuth?: boolean;
 };
 
-export const PrivatedRoute = ({
+export const PrivateRoute = ({
   children,
   onlyUnAuth
 }: TProtectedRouteProps) => {

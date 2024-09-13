@@ -8,8 +8,7 @@ import { useSelector, useDispatch } from '../../services/store';
 
 // компонент для страницы ленты заказов
 export const Feed: FC = () => {
-  /** TODO: взять переменную из стора */
-  const orders: TOrder[] = useSelector(getFeedOrders);
+  const orders = useSelector(getFeedOrders);
   const dispatch = useDispatch();
 
   useEffect(() => {

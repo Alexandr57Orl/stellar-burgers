@@ -17,9 +17,8 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
 import { getIngredients } from '../../services/slices/IngredientsSlice';
-import { toGetUserApi, checkUserAuth } from '../../services/slices/UserSlices';
-import { AppDispatch } from '../../services/store';
-import { PrivatedRoute } from '../../components/routes/ProtectedRoute';
+import { checkUserAuth } from '../../services/slices/UserSlices';
+import { PrivateRoute } from '../../components/routes/ProtectedRoute';
 
 const App = () => {
   const navigate = useNavigate();
@@ -35,9 +34,6 @@ const App = () => {
 
   useEffect(() => {
     dispatch(getIngredients());
-  }, [dispatch]);
-
-  useEffect(() => {
     dispatch(checkUserAuth());
   }, [dispatch]);
 
@@ -48,52 +44,54 @@ const App = () => {
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
         <Route path='/feed' element={<Feed />} />
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        {/* роуты которые находятся под защитой */}
         <Route
           path='login'
           element={
-            <PrivatedRoute onlyUnAuth>
+            <PrivateRoute onlyUnAuth>
               <Login />
-            </PrivatedRoute>
+            </PrivateRoute>
           }
         />
         <Route
           path='register'
           element={
-            <PrivatedRoute onlyUnAuth>
+            <PrivateRoute onlyUnAuth>
               <Register />
-            </PrivatedRoute>
+            </PrivateRoute>
           }
         />
         <Route
           path='forgot-password'
           element={
-            <PrivatedRoute onlyUnAuth>
+            <PrivateRoute onlyUnAuth>
               <ForgotPassword />
-            </PrivatedRoute>
+            </PrivateRoute>
           }
         />
         <Route
           path='reset-password'
           element={
-            <PrivatedRoute onlyUnAuth>
+            <PrivateRoute onlyUnAuth>
               <ResetPassword />
-            </PrivatedRoute>
+            </PrivateRoute>
           }
         />
         <Route
           path='profile'
           element={
-            <PrivatedRoute>
+            <PrivateRoute>
               <Profile />
-            </PrivatedRoute>
+            </PrivateRoute>
           }
         />
         <Route
           path='profile/orders'
           element={
-            <PrivatedRoute>
+            <PrivateRoute>
               <ProfileOrders />
-            </PrivatedRoute>
+            </PrivateRoute>
           }
         />
 
@@ -121,11 +119,11 @@ const App = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <PrivatedRoute>
+              <PrivateRoute>
                 <Modal title='Информаци по заказу' onClose={closeModal}>
                   <OrderInfo />
                 </Modal>
-              </PrivatedRoute>
+              </PrivateRoute>
             }
           />
         </Routes>
