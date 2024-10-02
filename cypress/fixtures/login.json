@@ -1,0 +1,9 @@
+{
+  "succes": true,
+  "accestoken": "test",
+  "refreshtoken": "test",
+  "user": {
+    "email": "test@ya.ru",
+    "name": "test"
+  }
+}

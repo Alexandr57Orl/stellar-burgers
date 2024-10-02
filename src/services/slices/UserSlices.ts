@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TUser } from '@utils-types';
 import { getCookie, setCookie, deleteCookie } from '../../utils/cookie';
-import { TRegisterData } from '@api';
+import { TRegisterData } from '../../utils/burger-api';
 
 import {
   registerUserApi,
@@ -9,12 +9,12 @@ import {
   getUserApi,
   updateUserApi,
   logoutApi
-} from '@api';
+} from '../../utils/burger-api';
 
-type TStateUser = {
+export type TStateUser = {
   user: TUser | null;
   isAuthChecked: boolean;
-  isAunticated: boolean;
+  isAuthenticated: boolean;
   loginUserError: null | string | undefined;
   loginUserRequest: boolean;
 };
@@ -22,7 +22,7 @@ type TStateUser = {
 const initialState: TStateUser = {
   user: null,
   isAuthChecked: false,
-  isAunticated: false,
+  isAuthenticated: false,
   loginUserError: null,
   loginUserRequest: false
 };
@@ -73,19 +73,19 @@ export const userStateSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(toGetUserApi.pending, (state) => {
-        state.isAunticated = false;
+        state.isAuthenticated = false;
         state.user = null;
         state.loginUserError = null;
         state.loginUserRequest = true;
       })
       .addCase(toGetUserApi.fulfilled, (state, action) => {
-        state.isAunticated = true;
+        state.isAuthenticated = true;
         state.user = action.payload.user;
         state.isAuthChecked = true;
         state.loginUserRequest = false;
       })
       .addCase(toGetUserApi.rejected, (state, action) => {
-        state.isAunticated = false;
+        state.isAuthenticated = false;
         state.user = null;
         state.loginUserError = action.error.message || 'Server error';
         state.isAuthChecked = true;
@@ -96,7 +96,7 @@ export const userStateSlice = createSlice({
         state.loginUserRequest = true;
       })
       .addCase(toLogin.fulfilled, (state, action) => {
-        state.isAunticated = true;
+        state.isAuthenticated = true;
         state.user = action.payload;
         state.loginUserRequest = false;
         state.isAuthChecked = true;
@@ -107,54 +107,54 @@ export const userStateSlice = createSlice({
         state.loginUserRequest = false;
       })
       .addCase(toRegister.pending, (state) => {
-        state.isAunticated = false;
+        state.isAuthenticated = false;
         state.loginUserRequest = true;
         state.user = null;
       })
       .addCase(toRegister.fulfilled, (state, action) => {
-        state.isAunticated = true;
+        state.isAuthenticated = true;
         state.user = action.payload;
         state.loginUserRequest = false;
       })
       .addCase(toRegister.rejected, (state, action) => {
-        state.isAunticated = false;
+        state.isAuthenticated = false;
         state.loginUserRequest = false;
         state.loginUserError = action.error.message || 'Server error';
       })
       .addCase(toLogout.pending, (state) => {
-        state.isAunticated = true;
+        state.isAuthenticated = true;
         state.loginUserRequest = true;
       })
       .addCase(toLogout.fulfilled, (state) => {
-        state.isAunticated = false;
+        state.isAuthenticated = false;
         state.user = null;
         state.loginUserRequest = false;
         deleteCookie('accessToken');
         localStorage.removeItem('refreshToken');
       })
       .addCase(toLogout.rejected, (state, action) => {
-        state.isAunticated = false;
+        state.isAuthenticated = false;
         state.loginUserError = action.error.message || 'Server error';
         state.loginUserRequest = false;
       })
       .addCase(toUpdateUser.pending, (state) => {
-        state.isAunticated = true;
+        state.isAuthenticated = true;
         state.loginUserRequest = true;
       })
       .addCase(toUpdateUser.fulfilled, (state, action) => {
-        state.isAunticated = true;
+        state.isAuthenticated = true;
         state.loginUserRequest = false;
         state.user = action.payload.user;
       })
       .addCase(toUpdateUser.rejected, (state, action) => {
-        state.isAunticated = false;
+        state.isAuthenticated = false;
         state.loginUserRequest = false;
         state.loginUserError = action.error.message || 'Server error';
       });
   },
   selectors: {
     selectUser: (state) => state.user,
-    selectIsAunticated: (state) => state.isAunticated,
+    selectIsAunticated: (state) => state.isAuthenticated,
     selectIsAuthChecked: (state) => state.isAuthChecked,
     selectLoginUserError: (state) => state.loginUserError,
     selectLoginUserRequest: (state) => state.loginUserRequest
