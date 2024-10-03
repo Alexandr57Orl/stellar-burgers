@@ -2,20 +2,11 @@ import { create } from 'domain';
 import {
   getFeed,
   getOrderByNum,
-  TStateFeed,
-  feedStateSlice
+  feedStateSlice,
+  initialState
 } from './FeedSlice';
 
 // Начальное состояние для тестов, вынесенное в глобальную переменную для общего доступа
-
-const initialState: TStateFeed = {
-  orders: [],
-  total: 0,
-  totalToday: 0,
-  error: null,
-  isLoading: false,
-  modalOrder: null
-};
 
 //Тестовые данные заказов для использования в тестах, в глобальной переменной для общего доступа
 const testOrders = {

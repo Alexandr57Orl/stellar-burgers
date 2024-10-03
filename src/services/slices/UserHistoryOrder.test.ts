@@ -1,15 +1,8 @@
 import {
-  TStateOrderHistory,
   getHIstoryOrderApi,
-  historyOrderStateSlice
+  historyOrderStateSlice,
+  initialState
 } from './UserHistoryOrder';
-
-//Тестовый начальный стэйт для глобального использования
-const initialState: TStateOrderHistory = {
-  orders: [],
-  isLoading: false,
-  error: null
-};
 
 //Тестовые данные заказов для глобального использования
 

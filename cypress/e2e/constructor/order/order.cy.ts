@@ -1,10 +1,12 @@
+import { selectors } from '../constructor.cy';
+// ...
 describe('Order page test', function () {
   this.beforeEach(function () {
     cy.intercept('GET', 'api/ingredients', { fixture: 'ingredients.json' });
     cy.intercept(`GET`, `api/auth/user`, { fixture: `userAnswer.json` });
-    cy.intercept(`POST`, `api/orders`, { fixture: `succesOrder.json` });
+
     cy.viewport(1300, 800);
-    cy.visit('http://localhost:4000/');
+    cy.visit('/');
     //токены для успешной авторизации
     window.localStorage.setItem(
       'refreshToken',
@@ -19,7 +21,10 @@ describe('Order page test', function () {
   });
   //тест создания заказа
   it(`test create order and get succes answer`, function () {
-    cy.get('[data-cy=bun-ingredients]').contains('Добавить').click();
+    cy.intercept(`POST`, `api/orders`, { fixture: `succesOrder.json` }).as(
+      `createOrder`
+    );
+    cy.get(selectors.bunIngredientsSelector).contains('Добавить').click();
     cy.get('[data-cy=main-ingredients]').contains('Добавить').click();
     cy.get('[data-cy=sauces-ingredients]').contains('Добавить').click();
 
@@ -28,19 +33,22 @@ describe('Order page test', function () {
       .contains('Оформить заказ')
       .should(`exist`)
       .click();
+
+    // Проверка заказа
+    cy.wait('@createOrder').its('response.statusCode').should('eq', 200);
     //Проверка открытия модального окна и номера заказа после успешного создания заказа
     cy.get(`[data-cy=order_number]`).contains('123456').should('exist');
 
     //закрытие модального окна на крестик
     cy.get('[data-cy=close_icon]').click();
-    cy.get(`[data-cy=modal]`).should('not.exist');
+    cy.get(selectors.modal).should('not.exist');
     // очищение конструктора
     cy.get('[data-cy=main-constructor]').should('not.contain', 'Ингридиент 1');
-    cy.get('[data-cy=ingredient_constructor]').should(
+    cy.get(selectors.ingiredientConstructor).should(
       'not.contain',
       'Ингридиент 4'
     );
-    cy.get('[data-cy=ingredient_constructor]').should(
+    cy.get(selectors.ingiredientConstructor).should(
       'not.contain',
       'Ингридиент 2'
     );

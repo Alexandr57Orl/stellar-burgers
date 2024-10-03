@@ -3,10 +3,12 @@ import {
   removeIngredient,
   moveUpIngredient,
   moveDownIngredient,
-  clearOrder
+  clearOrder,
+  initialState
 } from './BurgerConstructorSlice';
 import burgerConstructorSlice from './BurgerConstructorSlice';
 import { TConstructorIngredient } from '@utils-types';
+
 describe('Constructor slice tests', () => {
   const bun: TConstructorIngredient = {
     _id: '1',
@@ -55,16 +57,6 @@ describe('Constructor slice tests', () => {
 
   // тест на добавление булки в конструктор
   it('should add bun', () => {
-    const initialState = {
-      constructorItems: {
-        bun: null,
-        ingredients: []
-      },
-      orderRequest: false,
-      orderModalData: null,
-      loading: false,
-      error: null
-    };
     const newState = burgerConstructorSlice(initialState, addIngredient(bun));
     expect(newState.constructorItems.bun).toEqual({
       ...bun,
@@ -74,17 +66,6 @@ describe('Constructor slice tests', () => {
 
   //тест добавления булки в конструктор
   it('should add bun', () => {
-    const initialState = {
-      constructorItems: {
-        bun: null,
-        ingredients: []
-      },
-      orderRequest: false,
-      orderModalData: null,
-      loading: false,
-      error: null
-    };
-
     const newState = burgerConstructorSlice(initialState, addIngredient(bun));
 
     expect(newState.constructorItems.bun).toEqual({
@@ -94,17 +75,6 @@ describe('Constructor slice tests', () => {
   });
   // тест на добавление ингредиента в конструктор
   it('should add ingredient', () => {
-    const initialState = {
-      constructorItems: {
-        bun: null,
-        ingredients: []
-      },
-      orderRequest: false,
-      orderModalData: null,
-      loading: false,
-      error: null
-    };
-
     const newState = burgerConstructorSlice(initialState, addIngredient(sauce));
 
     expect(newState.constructorItems.ingredients).toHaveLength(1);

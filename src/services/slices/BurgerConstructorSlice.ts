@@ -18,7 +18,7 @@ type TStateBurgerConstructor = {
   error: null | string | undefined;
 };
 
-const initialState: TStateBurgerConstructor = {
+export const initialState: TStateBurgerConstructor = {
   constructorItems: {
     bun: null,
     ingredients: []

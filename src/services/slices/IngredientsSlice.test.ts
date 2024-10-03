@@ -1,15 +1,9 @@
 import ingredientsSlice, {
   getIngredients,
-  TStateIngredients
+  initialState
 } from './IngredientsSlice';
 
-// вынесем InitialState и testIngredient в глобальную область видимости для более удобного применения в it
-
-const initialState: TStateIngredients = {
-  ingredients: [],
-  loading: false,
-  error: null
-};
+// вынесем  testIngredient в глобальную область видимости для более удобного применения в it
 
 const testIngredient = [
   {

@@ -12,7 +12,7 @@ export type TStateFeed = {
   modalOrder: TOrder | null;
 };
 
-const initialState: TStateFeed = {
+export const initialState: TStateFeed = {
   orders: [],
   total: 0,
   totalToday: 0,

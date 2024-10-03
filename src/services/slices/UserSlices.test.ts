@@ -1,20 +1,12 @@
 import {
-  TStateUser,
   toLogin,
   toLogout,
   toRegister,
   userStateSlice,
   authVerify,
-  toUpdateUser
+  toUpdateUser,
+  initialState
 } from './UserSlices';
-
-const initialState: TStateUser = {
-  user: null,
-  isAuthChecked: false,
-  isAuthenticated: false,
-  loginUserError: null,
-  loginUserRequest: false
-};
 
 const fakeUser = {
   succes: true,
