@@ -2,13 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { TIngredient } from '../../utils/types';
 import { getIngredientsApi } from '../../utils/burger-api';
 
-type TStateIngredients = {
+export type TStateIngredients = {
   ingredients: TIngredient[];
   loading: boolean;
   error: null | string | undefined;
 };
 
-const initialState: TStateIngredients = {
+export const initialState: TStateIngredients = {
   ingredients: [],
   loading: false,
   error: null
